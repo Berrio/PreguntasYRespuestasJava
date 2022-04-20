@@ -1,11 +1,10 @@
 package preguntasyrespuestasjava;
 
-import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -20,12 +19,13 @@ public class Database {
     protected String opcion2;
     protected String opcion3;
     protected String opcionCorrecta;
+    protected Integer nivelJuego = 1;
 
     public List<Database> preguntasList = new ArrayList<>();
-    public List<String> historicoList = new ArrayList<>();
 
+    //Contructor generico para inicilializar las preguntas desde el JSON
     public Database() throws IOException {
-        crearPreguntas();
+        leerPreguntas();
     }
 
     public Database(String categoria, String nivel, String pregunta, String opcion1,
@@ -39,18 +39,39 @@ public class Database {
         this.opcionCorrecta = opcionCorrecta;
     }
 
-    public void guardarPregunta(){
-
+    //Obtiene todas las preguntas y respuestas
+    public List<Database> consultarTodasPreguntas(){
+        return preguntasList;
     }
 
-    public void consultarTodasPreguntas(){
-
+    //Consulta las preguntas para el juego
+    public List<Database> consultarPreguntasParaJuego(){
+        List<Database> list;
+        list = crearPreguntasJuego();
+        while (list.size()<5){
+            list = crearPreguntasJuego();
+        }
+        return list;
     }
-    public void consultarPreguntasParaJuego(){
 
+    //Crea las preguntas que el juego necesita
+    public List<Database> crearPreguntasJuego(){
+        List<Database> listPreguntas;
+        listPreguntas = consultarTodasPreguntas();
+        Collections.shuffle(listPreguntas);
+        List<Database> preguntas = new ArrayList<>();
+        for (Database i : listPreguntas) {
+            if ((Integer.parseInt(i.nivel))==nivelJuego){
+                preguntas.add(i);
+                break;
+            }
+        }
+        nivelJuego++;
+        return preguntas;
     }
 
-    public void crearPreguntas() throws IOException {
+    //Leer preguntas desde el Json
+    public void leerPreguntas() throws IOException {
 
             JSONParser jsonParser = new JSONParser();
             final String dir = System.getProperty("user.dir");
@@ -71,6 +92,7 @@ public class Database {
             }
     }
 
+    //Agrega las preguntas del Json a un Array
     public void parsePreguntas(JSONObject preguntas) {
         JSONObject preguntaObject = (JSONObject) preguntas.get("pregunta");
 
@@ -85,11 +107,7 @@ public class Database {
         preguntasList.add(new Database(categoria,nivel,pregunta,opcion1,opcion2,opcion3,opcionCorrecta));
     }
 
-    public void guardarJuego(){
+    // guardarJuego() se pasa a la clase Histotico jmedinr
 
-    }
-
-    public void consultarHistoricoJuegos(){
-
-    }
+    // consultarHistoricoJuegos() se pasa a la clase Historico jmedinr
 }
