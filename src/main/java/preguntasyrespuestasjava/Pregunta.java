@@ -33,7 +33,7 @@ public class Pregunta {
                 System.out.println("Pregunta con datos vacios o no validos");
                 break;
             }
-            System.out.println("Pregunta guardada exitosamente");
+            System.out.println("Pregunta guardada exitofffsamente");
             guardar();
 
 
